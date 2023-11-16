@@ -4,22 +4,6 @@
 #include <ctype.h>
 
 /**
- * free_stack - Frees a stack.
- * @stack: A pointer to the top of the stack.
- */
-void free_stack(stack_t *stack)
-{
-    stack_t *temp;
-
-    while (stack)
-    {
-        temp = stack->next;
-        free(stack);
-        stack = temp;
-    }
-}
-
-/**
  * push - Pushes an element to the stack.
  * @stack: A pointer to the top of the stack.
  * @line_number: The line number in the file.
@@ -65,7 +49,7 @@ void pall(stack_t **stack, unsigned int line_number)
 {
     stack_t *current = *stack;
 
-    (void)line_number; // Unused parameter
+    (void)line_number; /* Unused parameter */
 
     while (current)
     {
