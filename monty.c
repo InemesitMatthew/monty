@@ -1,7 +1,12 @@
 #include "monty.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <ctype.h>
 
+/**
+ * free_stack - Frees a stack.
+ * @stack: A pointer to the top of the stack.
+ */
 void free_stack(stack_t *stack)
 {
     stack_t *temp;
@@ -14,11 +19,17 @@ void free_stack(stack_t *stack)
     }
 }
 
+/**
+ * push - Pushes an element to the stack.
+ * @stack: A pointer to the top of the stack.
+ * @line_number: The line number in the file.
+ * @value: The value to push.
+ */
 void push(stack_t **stack, unsigned int line_number, char *value)
 {
     int num;
 
-    if (!value || !isdigit(*value) && *value != '-')
+    if (!value || (!isdigit(*value) && *value != '-'))
     {
         fprintf(stderr, "L%u: usage: push integer\n", line_number);
         free_stack(*stack);
@@ -45,6 +56,11 @@ void push(stack_t **stack, unsigned int line_number, char *value)
     *stack = new_node;
 }
 
+/**
+ * pall - Prints all the values on the stack.
+ * @stack: A pointer to the top of the stack.
+ * @line_number: The line number in the file.
+ */
 void pall(stack_t **stack, unsigned int line_number)
 {
     stack_t *current = *stack;

@@ -5,12 +5,59 @@
 #include <string.h>
 #include "monty.h"
 
-int main(int argc, char *argv[])
+/**
+ * execute_instruction - Executes the instruction based on opcode.
+ * @opcode: The opcode to execute.
+ * @stack: A pointer to the top of the stack.
+ * @line_number: The line number in the file.
+ * @arg: The argument associated with the opcode.
+ */
+void execute_instruction(char *opcode, stack_t **stack, unsigned int line_number, char *arg)
 {
-    FILE *file;
+    instruction_t *instruction = get_instruction(opcode);
+
+    if (instruction)
+    {
+        instruction->f(stack, line_number, arg);
+    }
+    else
+    {
+        fprintf(stderr, "L%u: unknown instruction %s\n", line_number, opcode);
+        free_stack(*stack);
+        exit(EXIT_FAILURE);
+    }
+}
+
+/**
+ * process_file - Processes the Monty byte code instructions from a file.
+ * @file: A pointer to the file.
+ * @stack: A pointer to the top of the stack.
+ */
+void process_file(FILE *file, stack_t **stack)
+{
     char *line = NULL;
     size_t len = 0;
     unsigned int line_number = 0;
+
+    while (getline(&line, &len, file) != -1)
+    {
+        line_number++;
+
+        char *opcode = strtok(line, " \t\n");
+        char *arg = strtok(NULL, " \t\n");
+
+        if (opcode)
+        {
+            execute_instruction(opcode, stack, line_number, arg);
+        }
+    }
+
+    free(line);
+}
+
+int main(int argc, char *argv[])
+{
+    FILE *file;
     stack_t *stack = NULL;
 
     if (argc != 2)
@@ -26,36 +73,10 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
-    /* Read and interpret Monty byte code instructions */
-    while (getline(&line, &len, file) != -1)
-    {
-        line_number++;
-
-        char *opcode = strtok(line, " \t\n");
-        char *arg = strtok(NULL, " \t\n");
-
-        if (opcode)
-        {
-            instruction_t *instruction = get_instruction(opcode);
-
-            if (instruction)
-            {
-                instruction->f(&stack, line_number, arg);
-            }
-            else
-            {
-                fprintf(stderr, "L%u: unknown instruction %s\n", line_number, opcode);
-                free_stack(stack);
-                free(line);
-                fclose(file);
-                exit(EXIT_FAILURE);
-            }
-        }
-    }
+    process_file(file, &stack);
 
     /* Clean up */
     free_stack(stack);
-    free(line);
     fclose(file);
 
     return 0;
