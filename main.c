@@ -43,6 +43,7 @@ void process_file(FILE *file, stack_t **stack)
     {
         line_number++;
 
+        // Tokenize the line to extract opcode and arguments
         char *opcode = strtok(line, " \t\n");
         char *arg = strtok(NULL, " \t\n");
 
