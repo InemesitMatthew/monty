@@ -1,8 +1,12 @@
 #include "monty.h"
-#include <stdlib.h>
-#include <stdio.h>
 
-void push(stack_t **stack, unsigned int line_number, char *arg) {
+/**
+ * push - push an element to the stack
+ * @stack: double pointer to the stack
+ * @line_number: current line number in the file
+ */
+void push(stack_t **stack, unsigned int line_number)
+{
     (void)line_number; /** Unused parameter */
     stack_t *new_node = malloc(sizeof(stack_t));
     if (!new_node) {
