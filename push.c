@@ -1,5 +1,6 @@
 #include "monty.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 void push(stack_t **stack, unsigned int line_number, char *arg) {
     (void)line_number; /** Unused parameter */
