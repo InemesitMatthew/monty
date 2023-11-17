@@ -3,6 +3,12 @@
 #include <stdio.h>
 #include <string.h>
 
+instruction_t instructions[] = {
+    {"pall", pall},
+    {"push", push},
+    {NULL, NULL}
+};
+
 void execute_instruction(char *opcode, stack_t **stack, unsigned int line_number, char *arg) {
     int i;
     for (i = 0; instructions[i].opcode; i++) {
