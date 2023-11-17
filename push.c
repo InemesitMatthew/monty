@@ -1,32 +1,45 @@
 #include "monty.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h> /* for isdigit */
 
 /**
- * push - push an element to the stack
- * @stack: double pointer to the stack
- * @line_number: current line number in the file
+ * push - Pushes an element onto the stack.
+ * @stack: A pointer to the top of the stack.
+ * @line_number: The line number in the Monty byte code file.
  */
 void push(stack_t **stack, unsigned int line_number)
 {
-    (void)line_number; /** Unused parameter */
-    stack_t *new_node = malloc(sizeof(stack_t));
-    if (!new_node) {
-        fprintf(stderr, "Error: malloc failed\n");
-        exit(EXIT_FAILURE);
-    }
+	stack_t *new_node;
+	char *arg;
 
-    if (!arg || (!isdigit(*arg) && *arg != '-' && *arg != '+')) {
-        fprintf(stderr, "L%u: usage: push integer\n", line_number);
-        free_stack(*stack);
-        free(new_node);
-        exit(EXIT_FAILURE);
-    }
+	/* Tokenize the line to extract the argument */
+	arg = strtok(NULL, " \t\n");
 
-    new_node->n = atoi(arg);
-    new_node->next = *stack;
-    new_node->prev = NULL;
+	/* Check if the argument is not provided or is not an integer */
+	if (arg == NULL || (!isdigit(*arg) && *arg != '-' && *arg != '+'))
+	{
+		fprintf(stderr, "L%d: usage: push integer\n", line_number);
+		exit(EXIT_FAILURE);
+	}
 
-    if (*stack)
-        (*stack)->prev = new_node;
-    
-    *stack = new_node;
+	/* Create a new node and check for allocation failure */
+	new_node = malloc(sizeof(stack_t));
+	if (new_node == NULL)
+	{
+		fprintf(stderr, "Error: malloc failed\n");
+		exit(EXIT_FAILURE);
+	}
+
+	/* Assign values to the new node */
+	new_node->n = atoi(arg);
+	new_node->prev = NULL;
+	new_node->next = *stack;
+
+	/* Update the previous node of the current top, if it exists */
+	if (*stack != NULL)
+		(*stack)->prev = new_node;
+
+	/* Update the stack to point to the new top */
+	*stack = new_node;
 }

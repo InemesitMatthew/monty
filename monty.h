@@ -3,10 +3,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-
-#define STACK_MODE 0
-#define QUEUE_MODE 1
 
 /**
  * struct stack_s - doubly linked list representation of a stack (or queue)
@@ -16,9 +12,9 @@
  */
 typedef struct stack_s
 {
-    int n;
-    struct stack_s *prev;
-    struct stack_s *next;
+	int n;
+	struct stack_s *prev;
+	struct stack_s *next;
 } stack_t;
 
 /**
@@ -28,20 +24,17 @@ typedef struct stack_s
  */
 typedef struct instruction_s
 {
-    char *opcode;
-    void (*f)(stack_t **stack, unsigned int line_number);
+	char *opcode;
+	void (*f)(stack_t **stack, unsigned int line_number);
 } instruction_t;
 
-typedef void (*instruction_func)(stack_t **, unsigned int);
-
-/* Global variable to store the mode (stack or queue) */
-extern int mode;
+/* Global variable to store the stack */
+extern stack_t *stack;
 
 /* Function prototypes */
+void execute_instruction(char *opcode, unsigned int line_number);
 void push(stack_t **stack, unsigned int line_number);
 void pall(stack_t **stack, unsigned int line_number);
-int is_number(char *str);
 void free_stack(stack_t *stack);
-void execute_instruction(char *opcode, stack_t **stack, unsigned int line_number);
 
 #endif /* MONTY_H */
