@@ -1,59 +1,32 @@
 #include "monty.h"
-#include <stdlib.h>
-#include <stdio.h>
-#include <ctype.h>
 
 /**
- * push - Pushes an element to the stack.
+ * execute_instruction - Executes the Monty bytecode instruction.
+ * @opcode: The opcode to execute.
  * @stack: A pointer to the top of the stack.
  * @line_number: The line number in the file.
- * @value: The value to push.
+ * @arg: The argument for the opcode (if any).
  */
-void push(stack_t **stack, unsigned int line_number, char *value)
+void execute_instruction(char *opcode, stack_t **stack, unsigned int line_number, char *arg)
 {
-    int num;
+    instruction_t instructions[] = {
+        {"push", push},
+        {"pall", pall},
+        {NULL, NULL}};
 
-    if (!value || (!isdigit(*value) && *value != '-'))
+    int i = 0;
+
+    while (instructions[i].opcode)
     {
-        fprintf(stderr, "L%u: usage: push integer\n", line_number);
-        free_stack(*stack);
-        exit(EXIT_FAILURE);
+        if (strcmp(opcode, instructions[i].opcode) == 0)
+        {
+            instructions[i].f(stack, line_number, arg);
+            return;
+        }
+        i++;
     }
 
-    num = atoi(value);
-
-    stack_t *new_node = malloc(sizeof(stack_t));
-    if (!new_node)
-    {
-        fprintf(stderr, "Error: malloc failed\n");
-        free_stack(*stack);
-        exit(EXIT_FAILURE);
-    }
-
-    new_node->n = num;
-    new_node->next = *stack;
-    new_node->prev = NULL;
-
-    if (*stack)
-        (*stack)->prev = new_node;
-
-    *stack = new_node;
-}
-
-/**
- * pall - Prints all the values on the stack.
- * @stack: A pointer to the top of the stack.
- * @line_number: The line number in the file.
- */
-void pall(stack_t **stack, unsigned int line_number)
-{
-    stack_t *current = *stack;
-
-    (void)line_number; /* Unused parameter */
-
-    while (current)
-    {
-        printf("%d\n", current->n);
-        current = current->next;
-    }
+    fprintf(stderr, "L%u: unknown instruction %s\n", line_number, opcode);
+    free_stack(*stack);
+    exit(EXIT_FAILURE);
 }
